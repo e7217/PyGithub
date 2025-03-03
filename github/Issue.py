@@ -571,6 +571,67 @@ class Issue(CompletableGithubObject):
         )
         return status == 204
 
+    def get_sub_issues(self) -> PaginatedList["Issue"]:
+        """
+        :calls: `GET /repos/{owner}/{repo}/issues/{issue_number}/sub_issues <https://docs.github.com/en/rest/issues/sub-issues#list-sub-issues>`_
+        """
+        return PaginatedList(
+            github.Issue.Issue,
+            self._requester,
+            f"{self.url}/sub_issues",
+            None,
+            headers={"Accept": Consts.subIssuesPreview},
+        )
+
+    def add_sub_issue(self, sub_issue_id: int) -> None:
+        """
+        :calls: `POST /repos/{owner}/{repo}/issues/{issue_number}/sub_issue <https://docs.github.com/en/rest/issues/sub-issues#add-sub-issue>`_
+        """
+        assert isinstance(sub_issue_id, int), sub_issue_id
+        post_parameters = {
+            "sub_issue_id": sub_issue_id,
+        }
+        headers, data = self._requester.requestJsonAndCheck(
+            "POST",
+            f"{self.url}/sub_issue",
+            input=post_parameters,
+            headers={"Accept": Consts.subIssuesPreview},
+        )
+
+    def remove_sub_issue(self, sub_issue_id: int) -> None:
+        """
+        :calls: `DELETE /repos/{owner}/{repo}/issues/{issue_number}/sub_issue <https://docs.github.com/en/rest/issues/sub-issues#remove-sub-issue>`_
+        """
+        assert isinstance(sub_issue_id, int), sub_issue_id
+        post_parameters = {
+            "sub_issue_id": sub_issue_id,
+        }
+        headers, data = self._requester.requestJsonAndCheck(
+            "DELETE",
+            f"{self.url}/sub_issue",
+            input=post_parameters,
+            headers={"Accept": Consts.subIssuesPreview},
+        )
+
+    def reprioritize_sub_issue(self, sub_issue_id: int, after_sub_issue_id: int = None) -> None:
+        """
+        :calls: `PATCH /repos/{owner}/{repo}/issues/{issue_number}/sub_issue <https://docs.github.com/en/rest/issues/sub-issues#reprioritize-sub-issue>`_
+        """
+        assert isinstance(sub_issue_id, int), sub_issue_id
+        post_parameters = {
+            "sub_issue_id": sub_issue_id,
+        }
+        if after_sub_issue_id is not None:
+            assert isinstance(after_sub_issue_id, int), after_sub_issue_id
+            post_parameters["after_sub_issue_id"] = after_sub_issue_id
+        
+        headers, data = self._requester.requestJsonAndCheck(
+            "PATCH",
+            f"{self.url}/sub_issue",
+            input=post_parameters,
+            headers={"Accept": Consts.subIssuesPreview},
+        )
+
     def get_timeline(self) -> PaginatedList[TimelineEvent]:
         """
         :calls: `GET /repos/{owner}/{repo}/issues/{number}/timeline <https://docs.github.com/en/rest/reference/issues#list-timeline-events-for-an-issue>`_

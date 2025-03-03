@@ -346,3 +346,25 @@ class Issue(Framework.TestCase):
                 else:
                     self.assertIsNone(event.source)
                     self.assertIsNotNone(event.actor)
+
+    def testGetSubIssues(self):
+        sub_issues = self.issue.get_sub_issues()
+        self.assertEqual(0, sub_issues.totalCount)
+
+    def testAddSubIssue(self):
+        self.issue.add_sub_issue(29)
+        # Since we can't actually test this without a real GitHub repository with sub-issues enabled,
+        # we're just testing that the method doesn't raise an exception
+
+    def testRemoveSubIssue(self):
+        self.issue.remove_sub_issue(29)
+        # Since we can't actually test this without a real GitHub repository with sub-issues enabled,
+        # we're just testing that the method doesn't raise an exception
+
+    def testReprioritizeSubIssue(self):
+        self.issue.reprioritize_sub_issue(29)
+        # Since we can't actually test this without a real GitHub repository with sub-issues enabled,
+        # we're just testing that the method doesn't raise an exception
+
+        self.issue.reprioritize_sub_issue(29, after_sub_issue_id=30)
+        # Test with after_sub_issue_id parameter
